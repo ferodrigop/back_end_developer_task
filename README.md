@@ -1,12 +1,12 @@
-#INSTRUCTIONS TO RUN THE PROJECT
+# INSTRUCTIONS TO RUN THE PROJECT
 
-Prerequisites:
+# Prerequisites:
 - Java Development Kit (JDK) 17
 - Maven
 - PostgreSQL 16
 - Git
 
-Setting Up PostgreSQL:
+# Setting Up PostgreSQL:
 - Install PostgreSQL
 - Follow the instructions on the official PostgreSQL website to install PostgreSQL.
 - Create a Database and User:
@@ -26,14 +26,14 @@ psql -U postgres -d bgs -f path/to/bgs-task.sql
 Replace path/to/bgs-task.sql with the actual path to the bgs-task.sql file in your cloned repository.
 
 
-Setting Up the Application:
+# Setting Up the Application:
 - Clone the Repository using Git
 
 git clone https://github.com/ferodrigop/back_end_developer_task.git
 
 cd repository-location
 
-Build the Application:
+# Build the Application:
 
 Use Maven to build the application:
 - while on the path where pom.xml file is located run:
@@ -44,6 +44,6 @@ Run the Application:
 java -jar backend-task-0.0.1-SNAPSHOT.jar
 
 
-API Documentation:
+# API Documentation:
 
 https://documenter.getpostman.com/view/25497197/2sA3QtdWXg#e4760ccc-71e8-4a83-bc47-1a780cd20d5f
