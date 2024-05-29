@@ -6,6 +6,7 @@ import org.jcodec.api.FrameGrab;
 import org.jcodec.common.model.Picture;
 import org.jcodec.scale.AWTUtil;
 import org.springframework.web.multipart.MultipartFile;
+import org.apache.commons.io.FilenameUtils;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -36,7 +37,7 @@ public class FileUpload {
             Thumbnails.of(new File(directory, fileName))
                     .size(150, 150)
                     .toFiles(directory, Rename.SUFFIX_HYPHEN_THUMBNAIL);
-            thumbnail.append(path).append(removeFileExtension(file.getOriginalFilename(), false)).append("-thumbnail").append(file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".")));
+            thumbnail.append(path).append(removeFileExtension(file.getOriginalFilename(), false)).append("-thumbnail").append(type);
         } else if(type.equals("video")) {
             int frameNumber = 0;
             try {
@@ -65,8 +66,6 @@ public class FileUpload {
             } catch (Exception e1) {
                 e1.printStackTrace();
             }
-        } else {
-            thumbnail.append("files/templates/").append("default-thumbnail.png");
         }
 
         return thumbnail.toString();

@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.rpindv.backend_task.helpers.validators.custom_anotations.NotNullOrBlank;
 import com.rpindv.backend_task.helpers.validators.custom_anotations.RatingsValue;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,6 +25,7 @@ public class ContentRates {
     @Column(name = "id_content_rate", updatable = false, unique = true, nullable = false)
     private Long id_content_rate;
 
+    @NotNullOrBlank
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "id_content", referencedColumnName = "id_content", nullable = false)
@@ -38,7 +37,7 @@ public class ContentRates {
     private User id_user;
 
     @RatingsValue
-    @NotNull
+    @NotNullOrBlank
     @Column(name = "rating")
     private Double rating;
 }
