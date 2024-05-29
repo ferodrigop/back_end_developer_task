@@ -23,6 +23,8 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import static com.rpindv.backend_task.helpers.FileProcessing.removeFileExtension;
+
 @Service
 @RequiredArgsConstructor
 public class ContentService {
@@ -33,17 +35,21 @@ public class ContentService {
     @Value("${file.storage.path}")
     private String uploadDirectory;
 
+    public Optional<Content> getContentById(Long id) {
+        return contentRepository.findById(id);
+    }
+
     @Transactional(rollbackOn = Exception.class)
     public void createContent(MultipartFile file, String title, String description, Integer id_category_content, Integer id_user) throws IOException {
         String path = uploadDirectory + "/" + id_user + "/";
 
-        String sanitizedFileName = FileNameSanitization.sanitizeFileName(FilenameUtils.getName(file.getOriginalFilename()));
+        String sanitizedFileName = FileNameSanitization.sanitizeFileName(removeFileExtension(file.getOriginalFilename(), false));
         String fileExtension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
 
         Content content = Content.builder()
                 .title(title)
                 .description(description)
-                .content_url(path + sanitizedFileName)
+                .content_url(path + sanitizedFileName + fileExtension)
                 .content_path(path)
                 .content_name(sanitizedFileName)
                 .content_extension(fileExtension)
@@ -53,10 +59,19 @@ public class ContentService {
                 .created_at(LocalDateTime.now())
                 .build();
 
-        String thumbnailURL = FileUpload.upload(path, uploadDirectory, file, sanitizedFileName, id_user);
+        String thumbnailURL = FileUpload.upload(path, uploadDirectory, file, sanitizedFileName+fileExtension, id_user);
 
         content.setThumbnail_url(thumbnailURL);
         contentRepository.save(content);
+    }
+
+    @Transactional(rollbackOn = Exception.class)
+    public void updateContentById(Long contentId, ContentDTO content) {
+        Optional<Content> existing = contentRepository.findById(contentId);
+        existing.get().setTitle(content.getTitle());
+        existing.get().setDescription(content.getDescription());
+        existing.get().setId_category_content(categoryContentRepository.findById(content.getCategory()).orElseThrow(() -> new RuntimeException("Category Content not found")));
+        contentRepository.save(existing.get());
     }
 
     @Transactional(rollbackOn = Exception.class)
@@ -74,18 +89,5 @@ public class ContentService {
 
         contentRepository.deleteById(contentId);
         return true;
-    }
-
-    @Transactional(rollbackOn = Exception.class)
-    public void updateContentById(Long contentId, ContentDTO content) {
-        Optional<Content> existing = contentRepository.findById(contentId);
-        existing.get().setTitle(content.getTitle());
-        existing.get().setDescription(content.getDescription());
-        existing.get().setId_category_content(categoryContentRepository.findById(content.getCategory()).orElseThrow(() -> new RuntimeException("Category Content not found")));
-        contentRepository.save(existing.get());
-    }
-
-    public Optional<Content> getContentById(Long id) {
-        return contentRepository.findById(id);
     }
 }
