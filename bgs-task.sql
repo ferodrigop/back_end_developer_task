@@ -1,5 +1,3 @@
-SET lc_messages TO 'en_US.UTF-8';
-
 create table users(
     id_user serial primary key not null,
     firstname_user varchar (40) not null default 'not provided',
@@ -9,8 +7,6 @@ create table users(
     password_user varchar (100) not null,
     CONSTRAINT valid_email CHECK ( email_user ~ '^[a-zA-Z0-9.!#$%&''*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$' )
 );
-
-alter table users add constraint valid_email CHECK ( email_user ~ '^[a-zA-Z0-9.!#$%&''*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$' )
 
 create table category_content(
     id_category_content serial primary key not null,
@@ -41,11 +37,23 @@ create table content_rates (
     constraint unique_rate unique (id_content, id_user)
 );
 
+-- All the following users have this passowrd: Password1!
+insert into users(firstname_user, lastname_user, nickname, email_user, password_user)
+values ('Amanda', 'Kaz', 'akazz', 'akaz@mail.com', '$2a$10$mxKFJUF6ke4BQG3FmZSASeTUxjDqSPHi/u39v//gOgjKnTFB7RE7W'),
+       ('Rodrigo', 'Pineda', 'blure', 'blure@mail.com', '$2a$10$mxKFJUF6ke4BQG3FmZSASeTUxjDqSPHi/u39v//gOgjKnTFB7RE7W'),
+       ('Arturo', 'Ronaldo', 'aronaldo', 'aronaldo@mail.com', '$2a$10$mxKFJUF6ke4BQG3FmZSASeTUxjDqSPHi/u39v//gOgjKnTFB7RE7W');
+
 insert into category_content (category_content)
 values ('Game'),
        ('Video'),
        ('Artwork'),
        ('Music');
 
-insert into users(firstname_user, lastname_user, nickname, email_user, password_user)
-values ('Rodrigo', 'Pineda', 'blue', 'rpindv@gmail.com', '$2a$10$eTWilYaPtz3mpi3F6vpVBeB/ss3SQz0Xcco1utDX7YVMOiVqwbWby')
+insert into content(title, description, content_url, content_path, content_name, content_extension, content_type, thumbnail_url)
+values ('MasterChief', 'MasterChief character sprite', 'files/uploads/1/masterchief.png', 'files/uploads/1/', 'masterchief', '.png', 'image/png', 'files/uploads/2/masterchief-thumbnail.png'),
+       ('Yellow Bus Video', 'Sample Video for in-game story', 'files/uploads/1/yellow_bus_-_12043_(720p).mp4', 'files/uploads/1/', 'yellow_bus_-_12043_(720p)', '.mp4', 'video/mp4', 'files/uploads/1/yellow_bus_-_12043_(720p)-thumbnail.png');
+
+insert into content_rates(id_content, id_user, rating)
+values(1, 1, 1.0),
+      (1, 2, 5.0),
+      (1, 3, 3.0);
