@@ -1,6 +1,5 @@
 package com.rpindv.backend_task.controllers;
 
-import com.rpindv.backend_task.entities.ContentRates;
 import com.rpindv.backend_task.helpers.validators.NotFoundException;
 import com.rpindv.backend_task.models.ContentRateDTO;
 import com.rpindv.backend_task.services.ContentRatesService;

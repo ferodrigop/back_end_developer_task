@@ -1,6 +1,9 @@
 package com.rpindv.backend_task.services;
 
+import com.rpindv.backend_task.entities.Content;
 import com.rpindv.backend_task.entities.ContentRates;
+import com.rpindv.backend_task.entities.User;
+import com.rpindv.backend_task.helpers.validators.AlreadyRatedContentException;
 import com.rpindv.backend_task.helpers.validators.NotFoundException;
 import com.rpindv.backend_task.models.ContentRateDTO;
 import com.rpindv.backend_task.repositories.ContentRatesRepository;
@@ -27,15 +30,23 @@ public class ContentRatesService {
         return contentRatesRepository.getAverageContentRate(id);
     }
 
+    public boolean checkIfAlreadyRatedContent(Long id_content, Integer id_user) {
+        return contentRatesRepository.checkIfAlreadyRated(id_content, id_user);
+    }
+
     @Transactional(rollbackOn = Exception.class)
     public void createContentRate(ContentRateDTO contentRates){
-        ContentRates saved = ContentRates.builder()
-                .id_content(contentRepository.findById(contentRates.getContentId()).orElseThrow(() -> new RuntimeException("Content not found")))
-                .id_user(userRepository.findById(contentRates.getUserId()).orElseThrow(() -> new RuntimeException("User not found")))
-                .rating(contentRates.getRate())
-                .build();
+        if(!checkIfAlreadyRatedContent(contentRates.getContentId(), contentRates.getUserId())) {
+            ContentRates saved = ContentRates.builder()
+                    .idContent(contentRepository.findById(contentRates.getContentId()).orElseThrow(NotFoundException::new))
+                    .idUser(userRepository.findById(contentRates.getUserId()).orElseThrow(NotFoundException::new))
+                    .rating(contentRates.getRate())
+                    .build();
 
-        contentRatesRepository.save(saved);
+            contentRatesRepository.save(saved);
+        } else {
+            throw new AlreadyRatedContentException();
+        }
     }
 
     @Transactional(rollbackOn = Exception.class)
@@ -47,7 +58,7 @@ public class ContentRatesService {
 
     @Transactional(rollbackOn = Exception.class)
     public Boolean deleteContentRate(Long id){
-        ContentRates contentRates = contentRatesRepository.findById(id).orElseThrow(NotFoundException::new);
+        contentRatesRepository.findById(id).orElseThrow(NotFoundException::new);
         contentRatesRepository.deleteById(id);
         return true;
     }

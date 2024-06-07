@@ -4,6 +4,7 @@ import com.rpindv.backend_task.entities.Content;
 import com.rpindv.backend_task.helpers.validators.NotFoundException;
 import com.rpindv.backend_task.models.ContentDTO;
 import com.rpindv.backend_task.services.ContentService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -49,7 +50,7 @@ public class ContentController {
     }
 
     @PostMapping("content/upload/single")
-    public ResponseEntity singleFileUpload(@RequestPart("file") MultipartFile file, @RequestPart("content") ContentDTO content) {
+    public ResponseEntity singleFileUpload(@RequestPart("file") MultipartFile file,@Valid @RequestPart("content") ContentDTO content) {
         try {
             contentService.createContent(file, content.getTitle(), content.getDescription(), content.getCategory(), 2);
             return new ResponseEntity<>(HttpStatus.CREATED);
@@ -60,7 +61,7 @@ public class ContentController {
     }
 
     @PostMapping("content/upload/multiple")
-    public ResponseEntity multipleFilesUpload(@RequestParam("files") MultipartFile[] files, @RequestPart("content") ContentDTO content) {
+    public ResponseEntity multipleFilesUpload(@RequestParam("files") MultipartFile[] files,@Valid @RequestPart("content") ContentDTO content) {
         for (MultipartFile file : files) {
             try {
                 contentService.createContent(file, content.getTitle(), content.getDescription(), content.getCategory(), 2);
@@ -73,7 +74,7 @@ public class ContentController {
     }
 
     @PostMapping("content/update/{contentId}")
-    public ResponseEntity updateById(@PathVariable("contentId")Long contentId, @Validated @RequestBody ContentDTO content){
+    public ResponseEntity updateById(@PathVariable("contentId")Long contentId, @Valid @RequestBody ContentDTO content){
 
         if( contentService.getContentById(contentId).isEmpty()){
             throw new NotFoundException();
